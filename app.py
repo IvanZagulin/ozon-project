@@ -66,6 +66,9 @@ def import_stream():
 def maintenance():
     return render_template('maintenance.html')
 
+# остальные маршруты выше...
+
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Используется порт от Render
-    app.run(host='0.0.0.0', port=port)        # Хост 0.0.0.0 нужен для Render
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
+
