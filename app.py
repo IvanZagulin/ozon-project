@@ -2,6 +2,7 @@ import os
 import threading
 import queue
 import io
+import time
 from flask import Flask, render_template, request, redirect, url_for, Response, send_file
 import glob
 import pandas as pd
@@ -57,18 +58,19 @@ def import_export():
 @app.route('/import_stream')
 def import_stream():
     def gen():
+        time.sleep(1.5)
         while True:
-            msg = LOG_QUEUE.get()
-            yield f"data: {msg}\n\n"
+            try:
+                msg = LOG_QUEUE.get(timeout=5)
+                yield f"data: {msg}\n\n"
+            except queue.Empty:
+                yield ": keepalive\n\n"
     return Response(gen(), mimetype='text/event-stream')
 
 @app.route('/maintenance')
 def maintenance():
     return render_template('maintenance.html')
 
-# остальные маршруты выше...
-
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
-
+    port = int(os.environ.get('PORT', 5000))  # Используется порт от Render
+    app.run(host='0.0.0.0', port=port)        # Хост 0.0.0.0 нужен для Render
