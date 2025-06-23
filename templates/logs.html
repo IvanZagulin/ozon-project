@@ -3,6 +3,14 @@
 {% block title %}Logs | Панель управления{% endblock %}
 
 {% block content %}
-<h1>Logs</h1>
-<p>Здесь будет содержимое раздела logs.</p>
+<h1>Логи</h1>
+{% if files %}
+  <ul>
+  {% for f in files %}
+    <li><a href="/logs/download/{{ f }}">{{ f }}</a></li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>Нет сохранённых логов.</p>
+{% endif %}
 {% endblock %}
