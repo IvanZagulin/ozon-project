@@ -1,15 +1,34 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
-@app.route("/", methods=["GET", "POST"])
+@app.route('/')
 def index():
-    if request.method == "POST":
-        file = request.files.get("file")
-        if file:
-            filename = file.filename
-            return f"Файл '{filename}' загружен успешно!"
-    return render_template("index.html")
+    return render_template('dashboard.html')
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+@app.route('/cards')
+def cards():
+    return render_template('cards.html')
+
+@app.route('/logs')
+def logs():
+    return render_template('logs.html')
+
+@app.route('/accounts')
+def accounts():
+    return render_template('accounts.html')
+
+@app.route('/settings')
+def settings():
+    return render_template('settings.html')
+
+@app.route('/import_export')
+def import_export():
+    return render_template('import_export.html')
+
+@app.route('/maintenance')
+def maintenance():
+    return render_template('maintenance.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
