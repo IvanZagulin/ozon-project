@@ -7,6 +7,9 @@ from flask import Flask, render_template, request, redirect, url_for, Response, 
 import glob
 import pandas as pd
 from transfer import run_transfer, log_message, LOG_STORE
+from flask import Response
+import time
+
 
 app = Flask(__name__)
 
@@ -53,6 +56,18 @@ def import_export():
             threading.Thread(target=run_transfer, args=(path, log_message), daemon=True).start()
         return render_template('import_export.html')
     return render_template('import_export.html')
+
+@app.route('/import_stream')
+def import_stream():
+    def event_stream():
+        last_index = 0
+        while True:
+            time.sleep(1)
+            new_logs = LOG_STORE[last_index:]
+            last_index += len(new_logs)
+            for log in new_logs:
+                yield f'data: {log}\n\n'
+    return Response(event_stream(), mimetype="text/event-stream")
 
 @app.route('/logs_data')
 def logs_data():
