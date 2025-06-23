@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template
 
 app = Flask(__name__)
@@ -31,5 +32,5 @@ def maintenance():
     return render_template('maintenance.html')
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Render задаёт свой PORT
-    app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get('PORT', 5000))  # Используется порт от Render
+    app.run(host='0.0.0.0', port=port)        # Хост 0.0.0.0 нужен для Render
