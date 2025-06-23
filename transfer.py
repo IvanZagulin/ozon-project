@@ -16,13 +16,13 @@ def log_message(msg):
         LOG_STORE.pop(0)
 
 # Константы
-WB_TOKEN  = "..."  # ваш токен
+WB_TOKEN  = "eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjQxMjE3djEiLCJ0eXAiOiJKV1QifQ.eyJlbnQiOjEsImV4cCI6MTc1MTkzOTcwNSwiaWQiOiIwMTk0M2JlNS1kNDIzLTc0OGQtOGM4NC01ZmMyMjA3ZDY1YzUiLCJpaWQiOjcxOTUyMDQzLCJvaWQiOjI3NjkwNywicyI6NzkzNCwic2lkIjoiZDMyZjgyMjQtNjY4Mi00ZmI2LWJkNWUtMDU3ZjA3NmE5NjllIiwidCI6ZmFsc2UsInVpZCI6NzE5NTIwNDN9.9piJOR1Z9w9kRx5KSZKJ5aN1yG4clHaCUF9oujD5buYQIZf_5c9tB6G7rb5UOL-ZoQGIAIWYFUM9rhhAmG-enA"  # ваш токен
 WB_URL    = "https://content-api.wildberries.ru/content/v2/get/cards/list"
 WB_HEAD   = {"Authorization": WB_TOKEN, "Content-Type": "application/json"}
 
-GROQ_API_KEY = "..."  # ваш API ключ
-CLIENT_ID    = "..."  # ваш клиент ID Ozon
-API_KEY      = "..."  # ваш API ключ Ozon
+GROQ_API_KEY = "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"  # ваш API ключ
+CLIENT_ID    = "341544"  # ваш клиент ID Ozon
+API_KEY      = "bd9477e7-0475-4f1e-a4bb-2c25f4861781"  # ваш API ключ Ozon
 OZ_HEAD      = {"Client-Id": CLIENT_ID, "Api-Key": API_KEY, "Content-Type": "application/json"}
 BASE_URL = "https://api-seller.ozon.ru"
 
