@@ -3,6 +3,23 @@
 {% block title %}Import_Export | Панель управления{% endblock %}
 
 {% block content %}
-<h1>Import_Export</h1>
-<p>Здесь будет содержимое раздела import_export.</p>
+<h1>Импорт/Экспорт</h1>
+
+<form method="post" enctype="multipart/form-data" class="mb-3">
+  <div class="input-group">
+    <input type="file" class="form-control" name="file" required>
+    <button class="btn btn-primary" type="submit">Загрузить</button>
+  </div>
+</form>
+
+<div id="log" style="white-space:pre-line;height:300px;overflow-y:auto;border:1px solid #ccc;padding:10px;"></div>
+
+<script>
+const logBox = document.getElementById('log');
+const es = new EventSource('/import_stream');
+es.onmessage = (e) => {
+  logBox.textContent += e.data + '\n';
+  logBox.scrollTop = logBox.scrollHeight;
+};
+</script>
 {% endblock %}

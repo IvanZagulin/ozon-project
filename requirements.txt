@@ -1,1 +1,6 @@
 flask
+requests
+pandas
+rapidfuzz
+openpyxl
+groq
