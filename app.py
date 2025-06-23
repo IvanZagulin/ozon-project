@@ -52,8 +52,11 @@ def import_export():
             os.makedirs('uploads', exist_ok=True)
             f.save(path)
             threading.Thread(target=run_transfer, args=(path, LOG_QUEUE.put), daemon=True).start()
-        return redirect(url_for('import_export'))
+        # НЕ redirect, а просто отрисовать ту же страницу,
+        # чтобы соединение с /import_stream не обрывалось
+        return render_template('import_export.html')
     return render_template('import_export.html')
+
 
 @app.route('/import_stream')
 def import_stream():
