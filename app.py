@@ -61,14 +61,15 @@ def import_export():
 @app.route('/import_stream')
 def import_stream():
     def gen():
-        time.sleep(1)
+        yield ": подключение установлено\\n\\n"  # сразу отправляем keepalive
         while True:
             try:
                 msg = LOG_QUEUE.get(timeout=5)
-                yield f"data: {msg}\n\n"
+                yield f"data: {msg}\\n\\n"
             except queue.Empty:
-                yield ": keepalive\n\n"
+                yield ": keepalive\\n\\n"
     return Response(gen(), mimetype='text/event-stream')
+
 
 @app.route('/maintenance')
 def maintenance():
