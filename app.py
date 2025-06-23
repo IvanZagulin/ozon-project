@@ -2,7 +2,6 @@ from flask import Flask, request, render_template, redirect, url_for, send_from_
 from transfer import run_transfer, log_message, LOG_STORE
 import os
 from werkzeug.utils import secure_filename
-from pathlib import Path
 
 # ───────────────────── Config ───────────────────────────────────
 UPLOAD_FOLDER = "uploads"
@@ -44,4 +43,5 @@ def download_log(filename):
 
 # ───────────────────── Entrypoint ───────────────────────────────
 if __name__ == "__main__":
+    # debug=True только для локальной разработки
     app.run(host="0.0.0.0", port=8000, debug=True, threaded=True)
