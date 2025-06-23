@@ -1,25 +1,37 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Импорт / Экспорт</title>
+  <style>
+    body { font-family: sans-serif; }
+    #logs {
+      white-space: pre-line;
+      background: #eee;
+      padding: 1em;
+      border: 1px solid #ccc;
+      height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Загрузка артикулов</h1>
+  <form method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".xlsx" required>
+    <button type="submit">Запустить импорт</button>
+  </form>
 
-{% block title %}Import_Export | Панель управления{% endblock %}
+  <h2>Логи выполнения:</h2>
+  <div id="logs"></div>
 
-{% block content %}
-<h1>Импорт/Экспорт</h1>
-
-<form method="post" enctype="multipart/form-data" class="mb-3">
-  <div class="input-group">
-    <input type="file" class="form-control" name="file" required>
-    <button class="btn btn-primary" type="submit">Загрузить</button>
-  </div>
-</form>
-
-<div id="log" style="white-space:pre-line;height:300px;overflow-y:auto;border:1px solid #ccc;padding:10px;"></div>
-
-<script>
-const logBox = document.getElementById('log');
-const es = new EventSource('/import_stream');
-es.onmessage = (e) => {
-  logBox.textContent += e.data + '\n';
-  logBox.scrollTop = logBox.scrollHeight;
-};
-</script>
-{% endblock %}
+  <script>
+    const logs = document.getElementById('logs');
+    const es = new EventSource('/import_stream');
+    es.onmessage = function (e) {
+      logs.textContent += e.data + '\n';
+      logs.scrollTop = logs.scrollHeight;
+    };
+  </script>
+</body>
+</html>
