@@ -3,12 +3,10 @@ import threading
 import queue
 import io
 import time
-from flask import Flask, render_template, request, redirect, url_for, Response, send_file
+from flask import Flask, render_template, request, redirect, url_for, Response, send_file, jsonify
 import glob
 import pandas as pd
-from transfer import run_transfer
-from flask import stream_with_context
-LOG_QUEUE = queue.Queue()
+from transfer import run_transfer, log_message, LOG_STORE
 
 app = Flask(__name__)
 
@@ -52,33 +50,13 @@ def import_export():
             path = os.path.join('uploads', f.filename)
             os.makedirs('uploads', exist_ok=True)
             f.save(path)
-            # запуск потока
-            threading.Thread(target=run_transfer, args=(path, LOG_QUEUE.put), daemon=True).start()
-            # или: threading.Thread(target=simulate_log, daemon=True).start()
+            threading.Thread(target=run_transfer, args=(path, log_message), daemon=True).start()
         return render_template('import_export.html')
     return render_template('import_export.html')
 
-@app.route('/import_stream')
-def import_stream():
-    def gen():
-        yield ": подключение установлено\n\n"
-        while True:
-            try:
-                msg = LOG_QUEUE.get(timeout=5)
-                yield f"data: {msg}\n\n"
-            except queue.Empty:
-                yield ": keepalive\n\n"
-
-    return Response(
-        stream_with_context(gen()),
-        mimetype='text/event-stream',
-        headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "Transfer-Encoding": "chunked",
-        }
-    )
-
+@app.route('/logs_data')
+def logs_data():
+    return jsonify(LOG_STORE)
 
 @app.route('/maintenance')
 def maintenance():

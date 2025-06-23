@@ -1,3 +1,13 @@
+
+LOG_STORE = []
+
+def log_message(msg):
+    print(msg)
+    LOG_STORE.append(msg)
+    if len(LOG_STORE) > 100:
+        LOG_STORE.pop(0)
+
+
 import json
 import pathlib
 import time
@@ -208,7 +218,7 @@ def build_ozon_card(wb: dict, desc: int, typ: int, attrs: list[dict]) -> dict:
         else:
             if a["type"].lower() in ("integer", "decimal"):
                 try:
-                        val = str(int(float(val)))
+                    val = str(int(float(val)))
                 except Exception:
                     continue
             item["values"].append({"value": str(val)})
@@ -280,35 +290,34 @@ def ozon_poll(task_id: str):
 
 def run_transfer(xlsx_path: str, log=print):
     try:
-        log("🚀 Запущен процесс переноса карточек")
-        log(f"Загружаю артикула из {xlsx_path}")
-        vcodes = load_vendor_codes(xlsx_path)
-        log(f"Получено {len(vcodes)} артикулов")
+    log(f"Загружаю артикула из {xlsx_path}")
+    vcodes = load_vendor_codes(xlsx_path)
+    log(f"Получено {len(vcodes)} артикулов")
 
-        wb_all = wb_get_all()
-        log(f"С Wildberries получено {len(wb_all)} карточек")
-        wb_need = dump_filtered(wb_all, vcodes)
-        log(f"Отфильтровано карточек: {len(wb_need)}")
-        if not wb_need:
-            log("Ничего не найдено по этим vendorCode")
-            return
+    wb_all = wb_get_all()
+    log(f"С Wildberries получено {len(wb_all)} карточек")
+    wb_need = dump_filtered(wb_all, vcodes)
+    log(f"Отфильтровано карточек: {len(wb_need)}")
+    if not wb_need:
+        log("Ничего не найдено по этим vendorCode")
+        return
 
-            pathlib.Path("logs_data").mkdir(exist_ok=True)
-        for idx in range(0, len(wb_need), 100):
-            batch = wb_need[idx : idx + 100]
-            oz_cards = []
-            for wb in batch:
-                desc, typ = choose_cat(wb["title"])
-                log(f"{wb.get('vendorCode')} → категория {desc}:{typ}")
-                attrs = get_attrs(desc, typ)
-                oz_cards.append(build_ozon_card(wb, desc, typ, attrs))
+        pathlib.Path("logs_data").mkdir(exist_ok=True)
+    for idx in range(0, len(wb_need), 100):
+        batch = wb_need[idx : idx + 100]
+        oz_cards = []
+        for wb in batch:
+            desc, typ = choose_cat(wb["title"])
+            log(f"{wb.get('vendorCode')} → категория {desc}:{typ}")
+            attrs = get_attrs(desc, typ)
+            oz_cards.append(build_ozon_card(wb, desc, typ, attrs))
 
-            log(f"Отправляю партию {idx//100 + 1}: {len(oz_cards)} шт.")
-            task = ozon_import_batch(oz_cards)
-            result = ozon_poll(task)
-            fname = pathlib.Path("logs_data") / f"ozon_result_{task}.json"
-            fname.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
-            log(f"✔ Завершена партия, лог в {fname}")
+        log(f"Отправляю партию {idx//100 + 1}: {len(oz_cards)} шт.")
+        task = ozon_import_batch(oz_cards)
+        result = ozon_poll(task)
+        fname = pathlib.Path("logs_data") / f"ozon_result_{task}.json"
+        fname.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        log(f"✔ Завершена партия, лог в {fname}")
 
     except Exception as e:
         import traceback
