@@ -7,7 +7,7 @@ from flask import Flask, render_template, request, redirect, url_for, Response, 
 import glob
 import pandas as pd
 from transfer import run_transfer
-
+from flask import stream_with_context
 LOG_QUEUE = queue.Queue()
 
 app = Flask(__name__)
@@ -61,14 +61,23 @@ def import_export():
 @app.route('/import_stream')
 def import_stream():
     def gen():
-        yield ": подключение установлено\\n\\n"  # сразу отправляем keepalive
+        yield ": подключение установлено\n\n"
         while True:
             try:
                 msg = LOG_QUEUE.get(timeout=5)
-                yield f"data: {msg}\\n\\n"
+                yield f"data: {msg}\n\n"
             except queue.Empty:
-                yield ": keepalive\\n\\n"
-    return Response(gen(), mimetype='text/event-stream')
+                yield ": keepalive\n\n"
+
+    return Response(
+        stream_with_context(gen()),
+        mimetype='text/event-stream',
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "Transfer-Encoding": "chunked",
+        }
+    )
 
 
 @app.route('/maintenance')
