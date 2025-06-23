@@ -280,6 +280,7 @@ def ozon_poll(task_id: str):
 
 def run_transfer(xlsx_path: str, log=print):
     try:
+        log("🚀 Запущен процесс переноса карточек")
         log(f"Загружаю артикула из {xlsx_path}")
         vcodes = load_vendor_codes(xlsx_path)
         log(f"Получено {len(vcodes)} артикулов")
