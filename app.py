@@ -28,7 +28,7 @@ def index():
         file.save(filepath)
 
         # запуск импорта
-        run_transfer(filepath, log=log_message)
+        run_transfer(filepath)
         return redirect(url_for("index"))
 
     return render_template("index.html", logs=LOG_STORE)
@@ -44,5 +44,4 @@ def download_log(filename):
 
 # ───────────────────── Entrypoint ───────────────────────────────
 if __name__ == "__main__":
-    # debug=True только для dev-среды
     app.run(host="0.0.0.0", port=8000, debug=True, threaded=True)
