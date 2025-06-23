@@ -279,6 +279,7 @@ def ozon_poll(task_id: str):
 
 
 def run_transfer(xlsx_path: str, log=print):
+    try:
     log(f"Загружаю артикула из {xlsx_path}")
     vcodes = load_vendor_codes(xlsx_path)
     log(f"Получено {len(vcodes)} артикулов")
@@ -291,7 +292,7 @@ def run_transfer(xlsx_path: str, log=print):
         log("Ничего не найдено по этим vendorCode")
         return
 
-    pathlib.Path("logs_data").mkdir(exist_ok=True)
+        pathlib.Path("logs_data").mkdir(exist_ok=True)
     for idx in range(0, len(wb_need), 100):
         batch = wb_need[idx : idx + 100]
         oz_cards = []
@@ -307,3 +308,8 @@ def run_transfer(xlsx_path: str, log=print):
         fname = pathlib.Path("logs_data") / f"ozon_result_{task}.json"
         fname.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
         log(f"✔ Завершена партия, лог в {fname}")
+
+    except Exception as e:
+        import traceback
+        log('[ОШИБКА] run_transfer сломался:')
+        log(traceback.format_exc())

@@ -48,20 +48,20 @@ def import_export():
     if request.method == 'POST':
         f = request.files.get('file')
         if f:
+            print("[ЗАГРУЗКА] Файл получен:", f.filename)
             path = os.path.join('uploads', f.filename)
             os.makedirs('uploads', exist_ok=True)
             f.save(path)
+            # запуск потока
             threading.Thread(target=run_transfer, args=(path, LOG_QUEUE.put), daemon=True).start()
-        # НЕ redirect, а просто отрисовать ту же страницу,
-        # чтобы соединение с /import_stream не обрывалось
+            # или: threading.Thread(target=simulate_log, daemon=True).start()
         return render_template('import_export.html')
     return render_template('import_export.html')
-
 
 @app.route('/import_stream')
 def import_stream():
     def gen():
-        time.sleep(1.5)
+        time.sleep(1)
         while True:
             try:
                 msg = LOG_QUEUE.get(timeout=5)
@@ -75,5 +75,5 @@ def maintenance():
     return render_template('maintenance.html')
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Используется порт от Render
-    app.run(host='0.0.0.0', port=port)        # Хост 0.0.0.0 нужен для Render
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)

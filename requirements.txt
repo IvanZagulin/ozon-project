@@ -4,4 +4,3 @@ pandas
 rapidfuzz
 openpyxl
 groq
-gunicorn
